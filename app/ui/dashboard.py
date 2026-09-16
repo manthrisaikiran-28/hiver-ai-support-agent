@@ -239,7 +239,13 @@ def main():
         st.subheader("Detailed Failure Log")
         fail_records = failures.get("failure_records", [])
         if fail_records:
-            st.dataframe(pd.DataFrame(fail_records)[["case_id", "failure_type", "judge_score", "retrieval_top_similarity", "root_cause", "suggested_improvement"]])
+            df_fails = pd.DataFrame(fail_records)
+            expected_cols = ["case_id", "failure_type", "judge_score", "retrieval_top_similarity", "root_cause", "suggested_improvement"]
+            avail_cols = [c for c in expected_cols if c in df_fails.columns]
+            if avail_cols:
+                st.dataframe(df_fails[avail_cols])
+            else:
+                st.dataframe(df_fails)
 
     # ------------------------------------------------------------------------
     # TAB 4: VERSION A VS VERSION B COMPARISON
