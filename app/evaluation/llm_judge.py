@@ -1,5 +1,5 @@
 """
-LLM-as-a-Judge Evaluator & Bug-Fixed Heuristic Scorer.
+LLM-as-a-Judge Evaluator & Truthful Fallback Evaluator.
 Evaluates agent responses across 6 rubric dimensions: correctness, relevance, completeness,
 groundedness, helpfulness, and escalation appropriateness.
 """
@@ -25,9 +25,15 @@ class JudgeResult:
     groundedness: float
     helpfulness: float
     escalation: float
+    passed: bool
     reason: str
+    judge_confidence: float
     failure_type: str  # "NONE", "RETRIEVAL_FAILURE", "GENERATION_FAILURE", "HALLUCINATION", "MISSING_CONTEXT", "WRONG_INTENT", "INCORRECT_ESCALATION", "UNNECESSARY_ESCALATION", "INCOMPLETE_ANSWER"
-    judge_mode: str    # "llm" or "heuristic"
+    judge_mode: str    # "llm" or "heuristic_fallback"
+
+    @property
+    def escalation_appropriateness(self) -> float:
+        return self.escalation
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -59,38 +65,30 @@ def _call_llm_api(prompt: str) -> Optional[str]:
         with urllib.request.urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read().decode("utf-8"))
         return "".join(block.get("text", "") for block in data.get("content", []))
-    except Exception as e:
+    except Exception:
         return None
 
 
-def _heuristic_judge_fixed(ticket_id: str,
-                           query: str,
-                           predicted_category: str,
-                           agent_response: str,
-                           golden: Dict[str, Any],
-                           needs_human: bool) -> JudgeResult:
+def _heuristic_judge_fallback(ticket_id: str,
+                              query: str,
+                              predicted_category: str,
+                              agent_response: str,
+                              golden: Dict[str, Any],
+                              needs_human: bool) -> JudgeResult:
     """
-    Bug-Fixed Offline Heuristic Judge.
-    Evaluates category fit, semantic overlap, intent coverage, and escalation correctness
-    without the flawed 'and'/'both' false penalty.
+    Truthful Offline Heuristic Fallback Scorer.
+    Evaluates category fit, semantic similarity, required facts, and escalation appropriateness.
     """
     ideal_category = golden.get("intent", golden.get("ideal_category", ""))
     ideal_response = golden.get("expected_answer", golden.get("ideal_response", ""))
     expected_escalation = golden.get("expected_escalation", False)
     required_facts = golden.get("required_facts", [])
 
-    # 1. Category fit
     cat_matched = (predicted_category == ideal_category)
-    category_fit = 5.0 if cat_matched else 1.0
-
-    # 2. Semantic overlap / completeness
     sim = compute_semantic_similarity(agent_response, ideal_response)
-    completeness = round(min(5.0, max(1.0, 1.0 + sim * 8.0)), 1)
-    relevance = round(min(5.0, max(1.0, 2.0 + sim * 6.0)), 1)
-    groundedness = 5.0 if len(agent_response) >= 20 else 2.0
 
-    # 3. Correctness & Fact Coverage (Bug-fixed: inspect actual missing facts)
     missing_facts = [f for f in required_facts if f.lower() not in agent_response.lower()]
+
     if not missing_facts and cat_matched:
         correctness = 5.0
     elif cat_matched and len(missing_facts) <= 1:
@@ -100,19 +98,19 @@ def _heuristic_judge_fixed(ticket_id: str,
     else:
         correctness = 1.0
 
-    # 4. Helpfulness
+    relevance = round(min(5.0, max(1.0, 2.0 + sim * 6.0)), 1)
+    completeness = round(min(5.0, max(1.0, 1.0 + (1.0 - len(missing_facts)/max(1, len(required_facts))) * 4.0)), 1)
+    groundedness = 5.0 if len(agent_response) >= 20 else 2.0
     helpfulness = round((correctness + completeness + relevance) / 3.0, 1)
 
-    # 5. Escalation appropriateness
     if needs_human == expected_escalation:
         escalation_score = 5.0
     else:
         escalation_score = 1.0
 
-    # 6. Overall average score
     overall = round((correctness + relevance + completeness + groundedness + helpfulness + escalation_score) / 6.0, 2)
+    passed = (overall >= 3.5 and correctness >= 3.0)
 
-    # Determine failure type
     failure_type = "NONE"
     if not cat_matched:
         failure_type = "WRONG_INTENT"
@@ -122,7 +120,7 @@ def _heuristic_judge_fixed(ticket_id: str,
         failure_type = "INCOMPLETE_ANSWER"
 
     reason = (
-        f"[heuristic-fixed] cat_match={cat_matched}, sim={sim:.2f}, "
+        f"[heuristic_fallback] cat_match={cat_matched}, sim={sim:.2f}, "
         f"missing_facts={len(missing_facts)}, escalation_ok={needs_human == expected_escalation}"
     )
 
@@ -135,9 +133,11 @@ def _heuristic_judge_fixed(ticket_id: str,
         groundedness=groundedness,
         helpfulness=helpfulness,
         escalation=escalation_score,
+        passed=passed,
         reason=reason,
+        judge_confidence=3.5,
         failure_type=failure_type,
-        judge_mode="heuristic",
+        judge_mode="heuristic_fallback",
     )
 
 
@@ -165,7 +165,6 @@ def evaluate_llm_judge(agent_output: Dict[str, Any], golden_record: Dict[str, An
     raw_resp = _call_llm_api(prompt)
     if raw_resp:
         try:
-            # Extract JSON from code fence or raw string
             json_str = raw_resp
             if "```json" in raw_resp:
                 json_str = raw_resp.split("```json")[1].split("```")[0].strip()
@@ -173,21 +172,23 @@ def evaluate_llm_judge(agent_output: Dict[str, Any], golden_record: Dict[str, An
                 json_str = raw_resp.split("```")[1].split("```")[0].strip()
 
             parsed = json.loads(json_str)
+            overall = float(parsed.get("overall_score", 4.0))
             return JudgeResult(
                 ticket_id=ticket_id,
-                overall_score=float(parsed.get("overall_score", 4.0)),
+                overall_score=overall,
                 correctness=float(parsed.get("correctness", 4.0)),
                 relevance=float(parsed.get("relevance", 4.0)),
                 completeness=float(parsed.get("completeness", 4.0)),
                 groundedness=float(parsed.get("groundedness", 4.0)),
                 helpfulness=float(parsed.get("helpfulness", 4.0)),
-                escalation=float(parsed.get("escalation", 4.0)),
+                escalation=float(parsed.get("escalation_appropriateness", parsed.get("escalation", 4.0))),
+                passed=bool(parsed.get("pass", overall >= 3.5)),
                 reason=str(parsed.get("reason", "LLM Judge evaluation completed.")),
+                judge_confidence=float(parsed.get("judge_confidence", 4.5)),
                 failure_type=str(parsed.get("failure_type", "NONE")),
                 judge_mode="llm",
             )
         except Exception:
             pass
 
-    # Fallback to bug-fixed heuristic judge
-    return _heuristic_judge_fixed(ticket_id, query, predicted_category, agent_response, golden_record, needs_human)
+    return _heuristic_judge_fallback(ticket_id, query, predicted_category, agent_response, golden_record, needs_human)

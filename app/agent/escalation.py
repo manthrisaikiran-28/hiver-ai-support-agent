@@ -5,8 +5,10 @@ Determines whether a ticket requires human agent escalation based on risk, compl
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List
 
+
+RETRIEVAL_THRESHOLD = 0.25
 
 ESCALATION_KEYWORDS = {
     "data_loss": ["data missing", "history gone", "deleted", "compliance", "lost history"],
@@ -25,18 +27,19 @@ class EscalationDecision:
 
 def evaluate_escalation(query: str,
                         detected_intents: List[str],
-                        confidence: float,
-                        is_sufficient_context: bool) -> EscalationDecision:
+                        retrieval_top_similarity: float,
+                        is_sufficient_context: bool,
+                        threshold: float = RETRIEVAL_THRESHOLD) -> EscalationDecision:
     """
     Evaluate policy conditions to determine if a ticket should be escalated.
     """
     query_lower = query.lower()
 
-    # Rule 1: Insufficient context
-    if not is_sufficient_context or confidence < 0.30:
+    # Rule 1: Insufficient context or low similarity
+    if not is_sufficient_context or retrieval_top_similarity < threshold:
         return EscalationDecision(
             needs_human=True,
-            escalation_reason="Insufficient knowledge base context to confidently resolve issue automatically.",
+            escalation_reason=f"Insufficient retrieved evidence context (top similarity {retrieval_top_similarity:.4f} below threshold {threshold}).",
             risk_level="MEDIUM",
         )
 
@@ -45,7 +48,7 @@ def evaluate_escalation(query: str,
         if kw in query_lower:
             return EscalationDecision(
                 needs_human=True,
-                escalation_reason="Data loss or compliance impact detected; requires immediate tier-2 escalation.",
+                escalation_reason="Data loss or compliance impact detected; requires immediate tier-2 human escalation.",
                 risk_level="CRITICAL",
             )
 
@@ -54,7 +57,7 @@ def evaluate_escalation(query: str,
         if kw in query_lower:
             return EscalationDecision(
                 needs_human=True,
-                escalation_reason="2FA / Account Lockout requires manual identity verification by support.",
+                escalation_reason="2FA / Account Lockout requires manual identity verification by human support.",
                 risk_level="HIGH",
             )
 

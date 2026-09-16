@@ -11,15 +11,23 @@ from typing import Dict, Any, List
 
 @dataclass
 class DeterministicCheckResult:
+    case_id: str
+    intent_pass: bool
     required_facts_pass: bool
     forbidden_claims_pass: bool
-    intent_matched: bool
-    escalation_matched: bool
-    response_not_empty: bool
-    grounded_in_context: bool
-    overall_pass: bool
-    score: float  # 0.0 to 1.0
+    escalation_pass: bool
+    grounding_pass: bool
+    deterministic_pass: bool
+    deterministic_score: float  # 0.0 to 1.0
     details: Dict[str, Any]
+
+    @property
+    def score(self) -> float:
+        return self.deterministic_score
+
+    @property
+    def overall_pass(self) -> bool:
+        return self.deterministic_pass
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -27,6 +35,7 @@ class DeterministicCheckResult:
 
 def evaluate_deterministic(agent_output: Dict[str, Any],
                            golden_record: Dict[str, Any]) -> DeterministicCheckResult:
+    case_id = golden_record.get("id", "")
     response = agent_output.get("response", "").lower()
     predicted_intent = agent_output.get("intent", "")
     needs_human = agent_output.get("needs_human", False)
@@ -36,48 +45,45 @@ def evaluate_deterministic(agent_output: Dict[str, Any],
     required_facts = golden_record.get("required_facts", [])
     forbidden_claims = golden_record.get("forbidden_claims", [])
 
-    # Check 1: Response not empty
-    not_empty = len(response.strip()) >= 15
+    # Check 1: Intent matched
+    intent_pass = (predicted_intent == expected_intent)
 
     # Check 2: Required facts present
     missing_facts = []
     for fact in required_facts:
         if fact.lower() not in response:
             missing_facts.append(fact)
-    facts_pass = len(missing_facts) == 0
+    required_facts_pass = (len(missing_facts) == 0)
 
     # Check 3: Forbidden claims absent
     found_forbidden = []
     for claim in forbidden_claims:
         if claim.lower() in response:
             found_forbidden.append(claim)
-    forbidden_pass = len(found_forbidden) == 0
+    forbidden_claims_pass = (len(found_forbidden) == 0)
 
-    # Check 4: Intent matched
-    intent_pass = (predicted_intent == expected_intent)
-
-    # Check 5: Escalation matched
+    # Check 4: Escalation matched
     escalation_pass = (needs_human == expected_escalation)
 
-    # Check 6: Grounded in context / non-empty
-    retrieved_context = agent_output.get("retrieved_context", [])
-    grounded_pass = not_empty  # Baseline check
+    # Check 5: Grounding / non-empty response
+    not_empty = len(response.strip()) >= 15
+    grounding_pass = not_empty
 
-    # Calculate aggregate deterministic score
-    checks = [not_empty, facts_pass, forbidden_pass, intent_pass, escalation_pass, grounded_pass]
+    # Aggregate deterministic score
+    checks = [intent_pass, required_facts_pass, forbidden_claims_pass, escalation_pass, grounding_pass]
     pass_count = sum(1 for c in checks if c)
     score = round(pass_count / len(checks), 2)
-    overall_pass = (score >= 0.83)
+    deterministic_pass = (score >= 0.80 and forbidden_claims_pass)
 
     return DeterministicCheckResult(
-        required_facts_pass=facts_pass,
-        forbidden_claims_pass=forbidden_pass,
-        intent_matched=intent_pass,
-        escalation_matched=escalation_pass,
-        response_not_empty=not_empty,
-        grounded_in_context=grounded_pass,
-        overall_pass=overall_pass,
-        score=score,
+        case_id=case_id,
+        intent_pass=intent_pass,
+        required_facts_pass=required_facts_pass,
+        forbidden_claims_pass=forbidden_claims_pass,
+        escalation_pass=escalation_pass,
+        grounding_pass=grounding_pass,
+        deterministic_pass=deterministic_pass,
+        deterministic_score=score,
         details={
             "missing_facts": missing_facts,
             "found_forbidden": found_forbidden,

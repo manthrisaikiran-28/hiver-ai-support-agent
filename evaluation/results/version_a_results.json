@@ -1,198 +1,189 @@
 {
-  "version_label": "Version B (SentenceTransformers Enhanced)",
-  "timestamp": "2026-09-16 20:38:36",
+  "version_label": "Version A (TF-IDF Baseline)",
+  "timestamp": "2026-09-16 20:38:22",
   "summary": {
     "total_evaluated": 11,
-    "pass_rate_pct": 27.3,
-    "deterministic_pass_rate_pct": 90.9,
+    "pass_rate_pct": 9.1,
+    "deterministic_pass_rate_pct": 36.4,
     "category_accuracy_pct": 90.9,
-    "avg_overall_score": 3.54,
-    "avg_correctness": 3.36,
-    "avg_completeness": 2.27,
-    "avg_relevance": 3.33,
+    "avg_overall_score": 2.78,
+    "avg_correctness": 3.0,
+    "avg_completeness": 1.55,
+    "avg_relevance": 2.65,
     "avg_groundedness": 5.0,
-    "avg_escalation_appropriateness": 4.27,
-    "avg_deterministic_score": 0.8,
-    "avg_semantic_similarity": 0.2217,
-    "avg_retrieval_top_similarity": 0.4308,
-    "avg_retrieval_latency_ms": 14.97,
-    "avg_generation_latency_ms": 0.01,
-    "avg_total_agent_latency_ms": 15.23,
+    "avg_escalation_appropriateness": 2.09,
+    "avg_deterministic_score": 0.65,
+    "avg_semantic_similarity": 0.1122,
+    "avg_retrieval_top_similarity": 0.146,
+    "avg_retrieval_latency_ms": 0.05,
+    "avg_generation_latency_ms": 0.08,
+    "avg_total_agent_latency_ms": 0.17,
     "generation_mode": "template_fallback",
-    "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+    "retrieval_method": "TF-IDF Baseline",
     "judge_mode": "heuristic_fallback",
     "per_category_breakdown": {
       "account_access": {
         "total_cases": 2,
         "correct": 2,
         "accuracy": 1.0,
-        "avg_score": 3.92
+        "avg_score": 2.33
       },
       "billing": {
         "total_cases": 3,
         "correct": 2,
         "accuracy": 0.67,
-        "avg_score": 3.07
+        "avg_score": 2.48
       },
       "technical_bug": {
         "total_cases": 3,
         "correct": 3,
         "accuracy": 1.0,
-        "avg_score": 3.27
+        "avg_score": 2.92
       },
       "refund_complaint": {
         "total_cases": 2,
         "correct": 2,
         "accuracy": 1.0,
-        "avg_score": 3.69
+        "avg_score": 3.62
       },
       "how_to": {
         "total_cases": 1,
         "correct": 1,
         "accuracy": 1.0,
-        "avg_score": 4.65
+        "avg_score": 2.48
       }
     },
     "per_difficulty_breakdown": {
       "easy": {
         "total_cases": 4,
         "accuracy": 1.0,
-        "avg_score": 3.95
+        "avg_score": 2.4
       },
       "hard": {
         "total_cases": 4,
         "accuracy": 1.0,
-        "avg_score": 3.51
+        "avg_score": 3.23
       },
       "medium": {
         "total_cases": 3,
         "accuracy": 0.67,
-        "avg_score": 3.02
+        "avg_score": 2.7
       }
     }
   },
   "failure_analysis": {
-    "total_failures": 9,
-    "failure_rate_pct": 81.8,
+    "total_failures": 11,
+    "failure_rate_pct": 100.0,
     "statistics": [
       {
-        "failure_type": "GENERATION_FAILURE",
+        "failure_type": "UNNECESSARY_ESCALATION",
         "count": 7,
         "percentage": 63.6
       },
       {
-        "failure_type": "WRONG_INTENT",
-        "count": 1,
-        "percentage": 9.1
+        "failure_type": "GENERATION_FAILURE",
+        "count": 3,
+        "percentage": 27.3
       },
       {
-        "failure_type": "UNNECESSARY_ESCALATION",
+        "failure_type": "WRONG_INTENT",
         "count": 1,
         "percentage": 9.1
       }
     ],
     "failure_records": [
       {
+        "case_id": "t001",
+        "query": "cant login again!! hi team, i tried loggin in like 5 times now and it keeps saying invalid password...",
+        "expected_behavior": "Acknowledge login failures, instruct password reset, offer manual unlock if reset fails.",
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
+        "retrieved_context": [],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.6,
+        "judge_score": 2.33,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
+      },
+      {
         "case_id": "t002",
         "query": "billing question hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd... also unrelated but can we get an invoice with our company address on it",
         "expected_behavior": "Investigate duplicate charge on 3rd and 9th, process refund if verified, AND update invoice address to company address.",
-        "actual_response": "We are investigating the duplicate charge on your account to issue an immediate refund. We have also updated your invoice billing details with your company address for accounting.",
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
         "retrieved_context": [
           {
             "id": "t011",
             "subject": "why was i charged after cancelling",
             "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
             "category": "billing",
-            "similarity": 0.4663
+            "similarity": 0.2451
+          },
+          {
+            "id": "t018",
+            "subject": "can we get sso",
+            "body": "our it team requires single sign on for any tool we use, does this exist on your platform and which plan is it on",
+            "category": "feature_request",
+            "similarity": 0.2436
           },
           {
             "id": "t017",
             "subject": "seat count wrong on invoice",
             "body": "our invoice says 12 seats but we only have 9 active agents, 3 people left the company months ago and we removed them from the workspace. why are we still being charged for them",
             "category": "billing",
-            "similarity": 0.4639
-          },
-          {
-            "id": "t005",
-            "subject": "refund pls",
-            "body": "we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st, we barely used it this cycle",
-            "category": "refund_complaint",
-            "similarity": 0.3888
+            "similarity": 0.2136
           }
         ],
         "retrieval_similarity": 0.0,
-        "deterministic_score": 0.8,
-        "judge_score": 3.42,
-        "failure_type": "GENERATION_FAILURE",
-        "root_cause": "Response quality score below target threshold.",
-        "suggested_improvement": "Enhance context grounding and answer structure."
+        "deterministic_score": 0.6,
+        "judge_score": 2.47,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
       },
       {
         "case_id": "t003",
         "query": "tags not syncing we tag convos as 'urgent' but when my teammate opens the same conversation from her side the tag isnt there...",
         "expected_behavior": "Acknowledge tag sync bug, gather browser/account details, escalate to engineering for investigation.",
-        "actual_response": "Thank you for reporting this issue. Our engineering team has logged this bug report for investigation. We will investigate tag syncing errors, app crashes, email notification issues, or duplicate ticket threading and notify you as soon as a fix is deployed.",
-        "retrieved_context": [
-          {
-            "id": "t009",
-            "subject": "cant find the shared inbox setting",
-            "body": "trying to set up a shared inbox for support@ourcompany.com but i dont see the option anywhere in settings, maybe im blind lol. using chrome, mac",
-            "category": "how_to",
-            "similarity": 0.2751
-          },
-          {
-            "id": "t006",
-            "subject": "automation rule broken??",
-            "body": "set up a rule 2 weeks ago to auto assign emails with word 'refund' to the billing team, worked fine until yesterday, now nothing is getting auto assigned at all not even other rules. did something change on your end",
-            "category": "technical_bug",
-            "similarity": 0.2578
-          },
-          {
-            "id": "t007",
-            "subject": "urgent - data missing",
-            "body": "opened the dashboard this morning and half our conversation history from last week is just gone. this is really bad we need this for compliance reasons. please escalate",
-            "category": "technical_bug",
-            "similarity": 0.2266
-          }
-        ],
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
+        "retrieved_context": [],
         "retrieval_similarity": 0.0,
-        "deterministic_score": 0.8,
-        "judge_score": 3.32,
-        "failure_type": "GENERATION_FAILURE",
-        "root_cause": "Response quality score below target threshold.",
-        "suggested_improvement": "Enhance context grounding and answer structure."
+        "deterministic_score": 0.6,
+        "judge_score": 2.45,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
       },
       {
         "case_id": "t005",
         "query": "refund pls we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st...",
         "expected_behavior": "Acknowledge cancellation, offer prorated/full refund per policy, frame to reduce churn friction.",
-        "actual_response": "We're sorry to hear about your experience. If you are requesting a refund or cancellation due to service outage or team fit, we can process a full or prorated refund or outage credit while keeping your subscription active per your preference. Thank you for reaching out regarding your billing inquiry. We are reviewing your account invoice details. If there was a duplicate charge, wrong seat count on invoice, or invoice address update requested, we will issue an immediate refund and update your invoice billing profile.",
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
         "retrieved_context": [
           {
             "id": "t023",
             "subject": "want a refund AND to keep using it??",
             "body": "so this is weird but we want a partial refund for last month since the outage on the 14th cost us a bunch of missed customer replies, but we still want to keep our subscription active, not cancelling",
             "category": "refund_complaint",
-            "similarity": 0.5126
+            "similarity": 0.233
           },
           {
-            "id": "t011",
-            "subject": "why was i charged after cancelling",
-            "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
-            "category": "billing",
-            "similarity": 0.4415
+            "id": "t018",
+            "subject": "can we get sso",
+            "body": "our it team requires single sign on for any tool we use, does this exist on your platform and which plan is it on",
+            "category": "feature_request",
+            "similarity": 0.1685
           },
           {
             "id": "t002",
             "subject": "billing question",
             "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
             "category": "billing",
-            "similarity": 0.3504
+            "similarity": 0.1519
           }
         ],
         "retrieval_similarity": 0.0,
         "deterministic_score": 0.8,
-        "judge_score": 3.25,
+        "judge_score": 3.12,
         "failure_type": "GENERATION_FAILURE",
         "root_cause": "Response quality score below target threshold.",
         "suggested_improvement": "Enhance context grounding and answer structure."
@@ -201,36 +192,35 @@
         "case_id": "t007",
         "query": "urgent - data missing opened the dashboard this morning and half our conversation history from last week is just gone...",
         "expected_behavior": "Treat as critical compliance/data loss issue, escalate immediately to tier-2 engineering.",
-        "actual_response": "Thank you for reporting this issue. Our engineering team has logged this bug report for investigation. We will investigate tag syncing errors, app crashes, email notification issues, or duplicate ticket threading and notify you as soon as a fix is deployed.",
-        "retrieved_context": [
-          {
-            "id": "t016",
-            "subject": "csv export broken",
-            "body": "exporting conversation reports to csv, file downloads fine but half the rows are blank when i open it in excel. tried google sheets too, same issue",
-            "category": "technical_bug",
-            "similarity": 0.3691
-          },
-          {
-            "id": "t020",
-            "subject": "email notifications stopped",
-            "body": "used to get an email every time a new conversation came in, stopped about a week ago, didnt change any settings that i know of. checked spam folder, nothing there either",
-            "category": "technical_bug",
-            "similarity": 0.3274
-          },
-          {
-            "id": "t019",
-            "subject": "locked out, 2fa issue",
-            "body": "switched phones last week and didnt transfer my authenticator app, now i cant get past 2fa to log in. lost the backup codes too somewhere in my old notes app probably. need account access restored",
-            "category": "account_access",
-            "similarity": 0.2876
-          }
-        ],
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
+        "retrieved_context": [],
         "retrieval_similarity": 0.0,
         "deterministic_score": 0.8,
-        "judge_score": 3.22,
+        "judge_score": 3.12,
         "failure_type": "GENERATION_FAILURE",
         "root_cause": "Response quality score below target threshold.",
         "suggested_improvement": "Enhance context grounding and answer structure."
+      },
+      {
+        "case_id": "t009",
+        "query": "cant find the shared inbox setting trying to set up a shared inbox for support@ourcompany.com but i dont see the option anywhere...",
+        "expected_behavior": "Provide clear navigation steps to Settings -> Shared Inbox.",
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
+        "retrieved_context": [
+          {
+            "id": "t004",
+            "subject": "how do i add a new agent",
+            "body": "new hire starting monday, where do i go to add her as an agent on the shared inbox? also does adding more seats change our bill",
+            "category": "how_to",
+            "similarity": 0.1866
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.6,
+        "judge_score": 2.48,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
       },
       {
         "case_id": "t011",
@@ -239,25 +229,18 @@
         "actual_response": "We're sorry to hear about your experience. If you are requesting a refund or cancellation due to service outage or team fit, we can process a full or prorated refund or outage credit while keeping your subscription active per your preference. Thank you for reaching out regarding your billing inquiry. We are reviewing your account invoice details. If there was a duplicate charge, wrong seat count on invoice, or invoice address update requested, we will issue an immediate refund and update your invoice billing profile.",
         "retrieved_context": [
           {
-            "id": "t023",
-            "subject": "want a refund AND to keep using it??",
-            "body": "so this is weird but we want a partial refund for last month since the outage on the 14th cost us a bunch of missed customer replies, but we still want to keep our subscription active, not cancelling",
-            "category": "refund_complaint",
-            "similarity": 0.5056
-          },
-          {
             "id": "t002",
             "subject": "billing question",
             "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
             "category": "billing",
-            "similarity": 0.4658
+            "similarity": 0.2501
           },
           {
             "id": "t017",
             "subject": "seat count wrong on invoice",
             "body": "our invoice says 12 seats but we only have 9 active agents, 3 people left the company months ago and we removed them from the workspace. why are we still being charged for them",
             "category": "billing",
-            "similarity": 0.4242
+            "similarity": 0.1676
           }
         ],
         "retrieval_similarity": 0.0,
@@ -271,103 +254,60 @@
         "case_id": "t013",
         "query": "password reset link expired clicked forgot password, got the email, but by the time i clicked the link it said expired...",
         "expected_behavior": "Explain link expiry window, trigger fresh reset link, offer manual unlock if issue persists.",
-        "actual_response": "We're sorry for the trouble accessing your account. Please try requesting a password reset link. If you are locked out due to 2FA issues or expired reset links, our security team will manually verify your identity and restore your account access.",
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
         "retrieved_context": [
           {
             "id": "t001",
             "subject": "cant login again!!",
             "body": "hi team, i tried loggin in like 5 times now and it keeps saying invalid password. i KNOW my password is right i use it everywhere else lol. pls help asap this is blocking my whole team from responding to customers",
             "category": "account_access",
-            "similarity": 0.4327
-          },
-          {
-            "id": "t011",
-            "subject": "why was i charged after cancelling",
-            "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
-            "category": "billing",
-            "similarity": 0.4121
-          },
-          {
-            "id": "t019",
-            "subject": "locked out, 2fa issue",
-            "body": "switched phones last week and didnt transfer my authenticator app, now i cant get past 2fa to log in. lost the backup codes too somewhere in my old notes app probably. need account access restored",
-            "category": "account_access",
-            "similarity": 0.321
+            "similarity": 0.1565
           }
         ],
         "retrieval_similarity": 0.0,
-        "deterministic_score": 0.8,
-        "judge_score": 3.22,
-        "failure_type": "GENERATION_FAILURE",
-        "root_cause": "Response quality score below target threshold.",
-        "suggested_improvement": "Enhance context grounding and answer structure."
+        "deterministic_score": 0.6,
+        "judge_score": 2.33,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
       },
       {
         "case_id": "t017",
         "query": "seat count wrong on invoice our invoice says 12 seats but we only have 9 active agents...",
         "expected_behavior": "Verify active seat count (9 vs 12), update subscription to 9 seats, issue credit/refund for 3 removed seats.",
-        "actual_response": "Thank you for reaching out regarding your billing inquiry. We are reviewing your account invoice details. If there was a duplicate charge, wrong seat count on invoice, or invoice address update requested, we will issue an immediate refund and update your invoice billing profile.",
-        "retrieved_context": [
-          {
-            "id": "t004",
-            "subject": "how do i add a new agent",
-            "body": "new hire starting monday, where do i go to add her as an agent on the shared inbox? also does adding more seats change our bill",
-            "category": "how_to",
-            "similarity": 0.4126
-          },
-          {
-            "id": "t022",
-            "subject": "duplicate tickets being created",
-            "body": "every time a customer replies to an email thread it creates a brand new ticket instead of adding to the existing one, we now have like 40 duplicate tickets from the same 5 customers this week",
-            "category": "technical_bug",
-            "similarity": 0.3624
-          },
-          {
-            "id": "t002",
-            "subject": "billing question",
-            "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
-            "category": "billing",
-            "similarity": 0.3289
-          }
-        ],
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
+        "retrieved_context": [],
         "retrieval_similarity": 0.0,
-        "deterministic_score": 0.8,
-        "judge_score": 3.25,
-        "failure_type": "GENERATION_FAILURE",
-        "root_cause": "Response quality score below target threshold.",
-        "suggested_improvement": "Enhance context grounding and answer structure."
+        "deterministic_score": 0.6,
+        "judge_score": 2.42,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
       },
       {
         "case_id": "t022",
         "query": "duplicate tickets being created every time a customer replies to an email thread it creates a brand new ticket...",
         "expected_behavior": "Acknowledge email threading bug, offer ticket cleanup/merge, escalate to engineering.",
-        "actual_response": "Thank you for reporting this issue. Our engineering team has logged this bug report for investigation. We will investigate tag syncing errors, app crashes, email notification issues, or duplicate ticket threading and notify you as soon as a fix is deployed.",
+        "actual_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
         "retrieved_context": [
-          {
-            "id": "t015",
-            "subject": "not happy",
-            "body": "been a customer for 2 years and support response times have gotten way worse lately, tickets sit for days. also the new UI is confusing. considering switching, what can you do to keep us",
-            "category": "refund_complaint",
-            "similarity": 0.377
-          },
           {
             "id": "t020",
             "subject": "email notifications stopped",
             "body": "used to get an email every time a new conversation came in, stopped about a week ago, didnt change any settings that i know of. checked spam folder, nothing there either",
             "category": "technical_bug",
-            "similarity": 0.3559
+            "similarity": 0.2393
           },
           {
             "id": "t012",
             "subject": "app keeps crashing",
             "body": "the gmail extension crashes every time i try to open a conversation with more than like 10 replies in the thread. happens on both my laptop and desktop, reinstalled twice already",
             "category": "technical_bug",
-            "similarity": 0.34
+            "similarity": 0.182
           }
         ],
         "retrieval_similarity": 0.0,
         "deterministic_score": 0.8,
-        "judge_score": 3.28,
+        "judge_score": 3.2,
         "failure_type": "GENERATION_FAILURE",
         "root_cause": "Response quality score below target threshold.",
         "suggested_improvement": "Enhance context grounding and answer structure."
@@ -383,21 +323,21 @@
             "subject": "refund pls",
             "body": "we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st, we barely used it this cycle",
             "category": "refund_complaint",
-            "similarity": 0.5559
-          },
-          {
-            "id": "t011",
-            "subject": "why was i charged after cancelling",
-            "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
-            "category": "billing",
-            "similarity": 0.4621
+            "similarity": 0.2955
           },
           {
             "id": "t002",
             "subject": "billing question",
             "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
             "category": "billing",
-            "similarity": 0.3856
+            "similarity": 0.198
+          },
+          {
+            "id": "t011",
+            "subject": "why was i charged after cancelling",
+            "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
+            "category": "billing",
+            "similarity": 0.1669
           }
         ],
         "retrieval_similarity": 0.0,
@@ -411,38 +351,52 @@
   },
   "judge_validation": {
     "total_cases": 11,
-    "agreements": 3,
-    "disagreements": 8,
-    "agreement_rate_pct": 27.3,
+    "agreements": 1,
+    "disagreements": 10,
+    "agreement_rate_pct": 9.1,
     "reviewer_mode": "Single-reviewer manual validation",
     "disagreement_examples": [
       {
+        "ticket_id": "t001",
+        "human_score": 4.5,
+        "judge_score": 2.33,
+        "judge_mode": "heuristic_fallback",
+        "reason": "Score gap of 2.17: LLM judge bias toward longer responses."
+      },
+      {
         "ticket_id": "t002",
         "human_score": 5.0,
-        "judge_score": 3.42,
+        "judge_score": 2.47,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.58: LLM judge bias toward longer responses."
+        "reason": "Score gap of 2.53: LLM judge bias toward longer responses."
       },
       {
         "ticket_id": "t003",
         "human_score": 4.5,
-        "judge_score": 3.32,
+        "judge_score": 2.45,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.18: LLM judge bias toward longer responses."
+        "reason": "Score gap of 2.05: LLM judge bias toward longer responses."
       },
       {
         "ticket_id": "t005",
         "human_score": 4.5,
-        "judge_score": 3.25,
+        "judge_score": 3.12,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.25: LLM judge bias toward longer responses."
+        "reason": "Score gap of 1.38: LLM judge bias toward longer responses."
       },
       {
         "ticket_id": "t007",
         "human_score": 5.0,
-        "judge_score": 3.22,
+        "judge_score": 3.12,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.78: LLM judge bias toward longer responses."
+        "reason": "Score gap of 1.88: LLM judge bias toward longer responses."
+      },
+      {
+        "ticket_id": "t009",
+        "human_score": 4.0,
+        "judge_score": 2.48,
+        "judge_mode": "heuristic_fallback",
+        "reason": "Score gap of 1.52: LLM judge bias toward longer responses."
       },
       {
         "ticket_id": "t011",
@@ -454,23 +408,23 @@
       {
         "ticket_id": "t013",
         "human_score": 4.5,
-        "judge_score": 3.22,
+        "judge_score": 2.33,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.28: LLM judge bias toward longer responses."
+        "reason": "Score gap of 2.17: LLM judge bias toward longer responses."
       },
       {
         "ticket_id": "t017",
         "human_score": 4.5,
-        "judge_score": 3.25,
+        "judge_score": 2.42,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.25: LLM judge bias toward longer responses."
+        "reason": "Score gap of 2.08: LLM judge bias toward longer responses."
       },
       {
         "ticket_id": "t022",
         "human_score": 4.5,
-        "judge_score": 3.28,
+        "judge_score": 3.2,
         "judge_mode": "heuristic_fallback",
-        "reason": "Score gap of 1.22: LLM judge bias toward longer responses."
+        "reason": "Score gap of 1.30: LLM judge bias toward longer responses."
       }
     ]
   },
@@ -481,81 +435,58 @@
       "ideal_category": "account_access",
       "predicted_category": "account_access",
       "category_correct": true,
-      "agent_response": "We're sorry for the trouble accessing your account. Please try requesting a password reset link. If you are locked out due to 2FA issues or expired reset links, our security team will manually verify your identity and restore your account access.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Acknowledge login failures, instruct password reset, offer manual unlock if reset fails.",
-      "needs_human": false,
+      "needs_human": true,
       "expected_escalation": false,
-      "escalation_reason": "Standard inquiry resolved via automated knowledge base guidance.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.0000 below threshold 0.25).",
       "difficulty": "easy",
-      "confidence": 0.73,
-      "retrieval_latency_ms": 17.75,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 19.18,
+      "confidence": 0.5,
+      "retrieval_latency_ms": 0.17,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.96,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t001",
-      "retrieval_top_similarity": 0.4535,
-      "retrieved_context": [
-        {
-          "id": "t019",
-          "subject": "locked out, 2fa issue",
-          "body": "switched phones last week and didnt transfer my authenticator app, now i cant get past 2fa to log in. lost the backup codes too somewhere in my old notes app probably. need account access restored",
-          "category": "account_access",
-          "similarity": 0.4535
-        },
-        {
-          "id": "t013",
-          "subject": "password reset link expired",
-          "body": "clicked forgot password, got the email, but by the time i clicked the link (maybe 20 min later) it said expired. sent myself 3 more, all expire super fast. can you just reset it manually or extend the link time",
-          "category": "account_access",
-          "similarity": 0.4132
-        },
-        {
-          "id": "t012",
-          "subject": "app keeps crashing",
-          "body": "the gmail extension crashes every time i try to open a conversation with more than like 10 replies in the thread. happens on both my laptop and desktop, reinstalled twice already",
-          "category": "technical_bug",
-          "similarity": 0.306
-        }
-      ],
-      "retrieved_ids": [
-        "t019",
-        "t013",
-        "t012"
-      ],
-      "deterministic_score": 1.0,
-      "deterministic_pass": true,
+      "retrieval_top_similarity": 0.0,
+      "retrieved_context": [],
+      "retrieved_ids": [],
+      "deterministic_score": 0.6,
+      "deterministic_pass": false,
       "deterministic_details": {
         "case_id": "t001",
         "intent_pass": true,
-        "required_facts_pass": true,
+        "required_facts_pass": false,
         "forbidden_claims_pass": true,
-        "escalation_pass": true,
+        "escalation_pass": false,
         "grounding_pass": true,
-        "deterministic_pass": true,
-        "deterministic_score": 1.0,
+        "deterministic_pass": false,
+        "deterministic_score": 0.6,
         "details": {
-          "missing_facts": [],
+          "missing_facts": [
+            "password reset",
+            "account access"
+          ],
           "found_forbidden": [],
           "expected_intent": "account_access",
           "predicted_intent": "account_access",
           "expected_escalation": false,
-          "agent_escalation": false
+          "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.2224,
-      "overall_score": 4.62,
-      "correctness": 5.0,
-      "relevance": 3.3,
-      "completeness": 5.0,
+      "semantic_similarity": 0.0,
+      "overall_score": 2.33,
+      "correctness": 3.0,
+      "relevance": 2.0,
+      "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 4.4,
-      "escalation_appropriateness": 5.0,
-      "overall_pass": true,
+      "helpfulness": 2.0,
+      "escalation_appropriateness": 1.0,
+      "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.22, missing_facts=0, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.00, missing_facts=2, escalation_ok=False",
       "judge_confidence": 3.5,
-      "failure_type": "NONE"
+      "failure_type": "UNNECESSARY_ESCALATION"
     },
     {
       "id": "t002",
@@ -563,59 +494,59 @@
       "ideal_category": "billing",
       "predicted_category": "billing",
       "category_correct": true,
-      "agent_response": "We are investigating the duplicate charge on your account to issue an immediate refund. We have also updated your invoice billing details with your company address for accounting.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Investigate duplicate charge on 3rd and 9th, process refund if verified, AND update invoice address to company address.",
-      "needs_human": false,
+      "needs_human": true,
       "expected_escalation": false,
-      "escalation_reason": "Standard inquiry resolved via automated knowledge base guidance.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.2451 below threshold 0.25).",
       "difficulty": "hard",
-      "confidence": 0.73,
-      "retrieval_latency_ms": 14.45,
-      "generation_latency_ms": 0.02,
-      "total_agent_latency_ms": 14.83,
+      "confidence": 0.62,
+      "retrieval_latency_ms": 0.07,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.27,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t002",
-      "retrieval_top_similarity": 0.4663,
+      "retrieval_top_similarity": 0.2451,
       "retrieved_context": [
         {
           "id": "t011",
           "subject": "why was i charged after cancelling",
           "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
           "category": "billing",
-          "similarity": 0.4663
+          "similarity": 0.2451
+        },
+        {
+          "id": "t018",
+          "subject": "can we get sso",
+          "body": "our it team requires single sign on for any tool we use, does this exist on your platform and which plan is it on",
+          "category": "feature_request",
+          "similarity": 0.2436
         },
         {
           "id": "t017",
           "subject": "seat count wrong on invoice",
           "body": "our invoice says 12 seats but we only have 9 active agents, 3 people left the company months ago and we removed them from the workspace. why are we still being charged for them",
           "category": "billing",
-          "similarity": 0.4639
-        },
-        {
-          "id": "t005",
-          "subject": "refund pls",
-          "body": "we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st, we barely used it this cycle",
-          "category": "refund_complaint",
-          "similarity": 0.3888
+          "similarity": 0.2136
         }
       ],
       "retrieved_ids": [
         "t011",
-        "t017",
-        "t005"
+        "t018",
+        "t017"
       ],
-      "deterministic_score": 0.8,
-      "deterministic_pass": true,
+      "deterministic_score": 0.6,
+      "deterministic_pass": false,
       "deterministic_details": {
         "case_id": "t002",
         "intent_pass": true,
         "required_facts_pass": false,
         "forbidden_claims_pass": true,
-        "escalation_pass": true,
+        "escalation_pass": false,
         "grounding_pass": true,
-        "deterministic_pass": true,
-        "deterministic_score": 0.8,
+        "deterministic_pass": false,
+        "deterministic_score": 0.6,
         "details": {
           "missing_facts": [
             "duplicate charge refund",
@@ -625,22 +556,22 @@
           "expected_intent": "billing",
           "predicted_intent": "billing",
           "expected_escalation": false,
-          "agent_escalation": false
+          "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.3198,
-      "overall_score": 3.42,
+      "semantic_similarity": 0.1051,
+      "overall_score": 2.47,
       "correctness": 3.0,
-      "relevance": 3.9,
+      "relevance": 2.6,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.6,
-      "escalation_appropriateness": 5.0,
+      "helpfulness": 2.2,
+      "escalation_appropriateness": 1.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.32, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.11, missing_facts=2, escalation_ok=False",
       "judge_confidence": 3.5,
-      "failure_type": "INCOMPLETE_ANSWER"
+      "failure_type": "UNNECESSARY_ESCALATION"
     },
     {
       "id": "t003",
@@ -648,59 +579,33 @@
       "ideal_category": "technical_bug",
       "predicted_category": "technical_bug",
       "category_correct": true,
-      "agent_response": "Thank you for reporting this issue. Our engineering team has logged this bug report for investigation. We will investigate tag syncing errors, app crashes, email notification issues, or duplicate ticket threading and notify you as soon as a fix is deployed.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Acknowledge tag sync bug, gather browser/account details, escalate to engineering for investigation.",
-      "needs_human": false,
+      "needs_human": true,
       "expected_escalation": false,
-      "escalation_reason": "Standard inquiry resolved via automated knowledge base guidance.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.0000 below threshold 0.25).",
       "difficulty": "easy",
-      "confidence": 0.64,
-      "retrieval_latency_ms": 10.92,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 11.03,
+      "confidence": 0.5,
+      "retrieval_latency_ms": 0.04,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.08,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t003",
-      "retrieval_top_similarity": 0.2751,
-      "retrieved_context": [
-        {
-          "id": "t009",
-          "subject": "cant find the shared inbox setting",
-          "body": "trying to set up a shared inbox for support@ourcompany.com but i dont see the option anywhere in settings, maybe im blind lol. using chrome, mac",
-          "category": "how_to",
-          "similarity": 0.2751
-        },
-        {
-          "id": "t006",
-          "subject": "automation rule broken??",
-          "body": "set up a rule 2 weeks ago to auto assign emails with word 'refund' to the billing team, worked fine until yesterday, now nothing is getting auto assigned at all not even other rules. did something change on your end",
-          "category": "technical_bug",
-          "similarity": 0.2578
-        },
-        {
-          "id": "t007",
-          "subject": "urgent - data missing",
-          "body": "opened the dashboard this morning and half our conversation history from last week is just gone. this is really bad we need this for compliance reasons. please escalate",
-          "category": "technical_bug",
-          "similarity": 0.2266
-        }
-      ],
-      "retrieved_ids": [
-        "t009",
-        "t006",
-        "t007"
-      ],
-      "deterministic_score": 0.8,
-      "deterministic_pass": true,
+      "retrieval_top_similarity": 0.0,
+      "retrieved_context": [],
+      "retrieved_ids": [],
+      "deterministic_score": 0.6,
+      "deterministic_pass": false,
       "deterministic_details": {
         "case_id": "t003",
         "intent_pass": true,
         "required_facts_pass": false,
         "forbidden_claims_pass": true,
-        "escalation_pass": true,
+        "escalation_pass": false,
         "grounding_pass": true,
-        "deterministic_pass": true,
-        "deterministic_score": 0.8,
+        "deterministic_pass": false,
+        "deterministic_score": 0.6,
         "details": {
           "missing_facts": [
             "bug report logged",
@@ -710,22 +615,22 @@
           "expected_intent": "technical_bug",
           "predicted_intent": "technical_bug",
           "expected_escalation": false,
-          "agent_escalation": false
+          "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.2377,
-      "overall_score": 3.32,
+      "semantic_similarity": 0.0912,
+      "overall_score": 2.45,
       "correctness": 3.0,
-      "relevance": 3.4,
+      "relevance": 2.5,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.5,
-      "escalation_appropriateness": 5.0,
+      "helpfulness": 2.2,
+      "escalation_appropriateness": 1.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.24, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.09, missing_facts=2, escalation_ok=False",
       "judge_confidence": 3.5,
-      "failure_type": "INCOMPLETE_ANSWER"
+      "failure_type": "UNNECESSARY_ESCALATION"
     },
     {
       "id": "t005",
@@ -733,46 +638,46 @@
       "ideal_category": "refund_complaint",
       "predicted_category": "refund_complaint",
       "category_correct": true,
-      "agent_response": "We're sorry to hear about your experience. If you are requesting a refund or cancellation due to service outage or team fit, we can process a full or prorated refund or outage credit while keeping your subscription active per your preference. Thank you for reaching out regarding your billing inquiry. We are reviewing your account invoice details. If there was a duplicate charge, wrong seat count on invoice, or invoice address update requested, we will issue an immediate refund and update your invoice billing profile.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Acknowledge cancellation, offer prorated/full refund per policy, frame to reduce churn friction.",
       "needs_human": true,
       "expected_escalation": true,
-      "escalation_reason": "High churn risk detected; requires human retention review.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.2330 below threshold 0.25).",
       "difficulty": "medium",
-      "confidence": 0.76,
-      "retrieval_latency_ms": 10.05,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 10.15,
+      "confidence": 0.62,
+      "retrieval_latency_ms": 0.04,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.08,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t005",
-      "retrieval_top_similarity": 0.5126,
+      "retrieval_top_similarity": 0.233,
       "retrieved_context": [
         {
           "id": "t023",
           "subject": "want a refund AND to keep using it??",
           "body": "so this is weird but we want a partial refund for last month since the outage on the 14th cost us a bunch of missed customer replies, but we still want to keep our subscription active, not cancelling",
           "category": "refund_complaint",
-          "similarity": 0.5126
+          "similarity": 0.233
         },
         {
-          "id": "t011",
-          "subject": "why was i charged after cancelling",
-          "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
-          "category": "billing",
-          "similarity": 0.4415
+          "id": "t018",
+          "subject": "can we get sso",
+          "body": "our it team requires single sign on for any tool we use, does this exist on your platform and which plan is it on",
+          "category": "feature_request",
+          "similarity": 0.1685
         },
         {
           "id": "t002",
           "subject": "billing question",
           "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
           "category": "billing",
-          "similarity": 0.3504
+          "similarity": 0.1519
         }
       ],
       "retrieved_ids": [
         "t023",
-        "t011",
+        "t018",
         "t002"
       ],
       "deterministic_score": 0.8,
@@ -798,17 +703,17 @@
           "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.183,
-      "overall_score": 3.25,
+      "semantic_similarity": 0.0912,
+      "overall_score": 3.12,
       "correctness": 3.0,
-      "relevance": 3.1,
+      "relevance": 2.5,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.4,
+      "helpfulness": 2.2,
       "escalation_appropriateness": 5.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.18, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.09, missing_facts=2, escalation_ok=True",
       "judge_confidence": 3.5,
       "failure_type": "INCOMPLETE_ANSWER"
     },
@@ -818,48 +723,22 @@
       "ideal_category": "technical_bug",
       "predicted_category": "technical_bug",
       "category_correct": true,
-      "agent_response": "Thank you for reporting this issue. Our engineering team has logged this bug report for investigation. We will investigate tag syncing errors, app crashes, email notification issues, or duplicate ticket threading and notify you as soon as a fix is deployed.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Treat as critical compliance/data loss issue, escalate immediately to tier-2 engineering.",
       "needs_human": true,
       "expected_escalation": true,
-      "escalation_reason": "Data loss or compliance impact detected; requires immediate tier-2 human escalation.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.0000 below threshold 0.25).",
       "difficulty": "hard",
-      "confidence": 0.68,
-      "retrieval_latency_ms": 13.93,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 14.04,
+      "confidence": 0.5,
+      "retrieval_latency_ms": 0.03,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.07,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t007",
-      "retrieval_top_similarity": 0.3691,
-      "retrieved_context": [
-        {
-          "id": "t016",
-          "subject": "csv export broken",
-          "body": "exporting conversation reports to csv, file downloads fine but half the rows are blank when i open it in excel. tried google sheets too, same issue",
-          "category": "technical_bug",
-          "similarity": 0.3691
-        },
-        {
-          "id": "t020",
-          "subject": "email notifications stopped",
-          "body": "used to get an email every time a new conversation came in, stopped about a week ago, didnt change any settings that i know of. checked spam folder, nothing there either",
-          "category": "technical_bug",
-          "similarity": 0.3274
-        },
-        {
-          "id": "t019",
-          "subject": "locked out, 2fa issue",
-          "body": "switched phones last week and didnt transfer my authenticator app, now i cant get past 2fa to log in. lost the backup codes too somewhere in my old notes app probably. need account access restored",
-          "category": "account_access",
-          "similarity": 0.2876
-        }
-      ],
-      "retrieved_ids": [
-        "t016",
-        "t020",
-        "t019"
-      ],
+      "retrieval_top_similarity": 0.0,
+      "retrieved_context": [],
+      "retrieved_ids": [],
       "deterministic_score": 0.8,
       "deterministic_pass": true,
       "deterministic_details": {
@@ -883,17 +762,17 @@
           "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.1585,
-      "overall_score": 3.22,
+      "semantic_similarity": 0.0912,
+      "overall_score": 3.12,
       "correctness": 3.0,
-      "relevance": 3.0,
+      "relevance": 2.5,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.3,
+      "helpfulness": 2.2,
       "escalation_appropriateness": 5.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.16, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.09, missing_facts=2, escalation_ok=True",
       "judge_confidence": 3.5,
       "failure_type": "INCOMPLETE_ANSWER"
     },
@@ -903,81 +782,68 @@
       "ideal_category": "how_to",
       "predicted_category": "how_to",
       "category_correct": true,
-      "agent_response": "Here is how to locate that feature: Please navigate to Settings in your workspace. If you need help setting up shared inboxes or evaluating platform integrations like WhatsApp, our support team can guide you.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Provide clear navigation steps to Settings -> Shared Inbox.",
-      "needs_human": false,
+      "needs_human": true,
       "expected_escalation": false,
-      "escalation_reason": "Standard inquiry resolved via automated knowledge base guidance.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.1866 below threshold 0.25).",
       "difficulty": "easy",
-      "confidence": 0.69,
-      "retrieval_latency_ms": 17.34,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 17.47,
+      "confidence": 0.59,
+      "retrieval_latency_ms": 0.04,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.08,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t009",
-      "retrieval_top_similarity": 0.378,
+      "retrieval_top_similarity": 0.1866,
       "retrieved_context": [
         {
           "id": "t004",
           "subject": "how do i add a new agent",
           "body": "new hire starting monday, where do i go to add her as an agent on the shared inbox? also does adding more seats change our bill",
           "category": "how_to",
-          "similarity": 0.378
-        },
-        {
-          "id": "t020",
-          "subject": "email notifications stopped",
-          "body": "used to get an email every time a new conversation came in, stopped about a week ago, didnt change any settings that i know of. checked spam folder, nothing there either",
-          "category": "technical_bug",
-          "similarity": 0.3023
-        },
-        {
-          "id": "t013",
-          "subject": "password reset link expired",
-          "body": "clicked forgot password, got the email, but by the time i clicked the link (maybe 20 min later) it said expired. sent myself 3 more, all expire super fast. can you just reset it manually or extend the link time",
-          "category": "account_access",
-          "similarity": 0.2607
+          "similarity": 0.1866
         }
       ],
       "retrieved_ids": [
-        "t004",
-        "t020",
-        "t013"
+        "t004"
       ],
-      "deterministic_score": 1.0,
-      "deterministic_pass": true,
+      "deterministic_score": 0.6,
+      "deterministic_pass": false,
       "deterministic_details": {
         "case_id": "t009",
         "intent_pass": true,
-        "required_facts_pass": true,
+        "required_facts_pass": false,
         "forbidden_claims_pass": true,
-        "escalation_pass": true,
+        "escalation_pass": false,
         "grounding_pass": true,
-        "deterministic_pass": true,
-        "deterministic_score": 1.0,
+        "deterministic_pass": false,
+        "deterministic_score": 0.6,
         "details": {
-          "missing_facts": [],
+          "missing_facts": [
+            "Settings",
+            "Shared Inbox"
+          ],
           "found_forbidden": [],
           "expected_intent": "how_to",
           "predicted_intent": "how_to",
           "expected_escalation": false,
-          "agent_escalation": false
+          "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.2294,
-      "overall_score": 4.65,
-      "correctness": 5.0,
-      "relevance": 3.4,
-      "completeness": 5.0,
+      "semantic_similarity": 0.1162,
+      "overall_score": 2.48,
+      "correctness": 3.0,
+      "relevance": 2.7,
+      "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 4.5,
-      "escalation_appropriateness": 5.0,
-      "overall_pass": true,
+      "helpfulness": 2.2,
+      "escalation_appropriateness": 1.0,
+      "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.23, missing_facts=0, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.12, missing_facts=2, escalation_ok=False",
       "judge_confidence": 3.5,
-      "failure_type": "NONE"
+      "failure_type": "UNNECESSARY_ESCALATION"
     },
     {
       "id": "t011",
@@ -991,39 +857,31 @@
       "expected_escalation": false,
       "escalation_reason": "High churn risk detected; requires human retention review.",
       "difficulty": "medium",
-      "confidence": 0.75,
-      "retrieval_latency_ms": 15.93,
-      "generation_latency_ms": 0.02,
-      "total_agent_latency_ms": 16.03,
+      "confidence": 0.63,
+      "retrieval_latency_ms": 0.04,
+      "generation_latency_ms": 0.01,
+      "total_agent_latency_ms": 0.08,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t011",
-      "retrieval_top_similarity": 0.5056,
+      "retrieval_top_similarity": 0.2501,
       "retrieved_context": [
-        {
-          "id": "t023",
-          "subject": "want a refund AND to keep using it??",
-          "body": "so this is weird but we want a partial refund for last month since the outage on the 14th cost us a bunch of missed customer replies, but we still want to keep our subscription active, not cancelling",
-          "category": "refund_complaint",
-          "similarity": 0.5056
-        },
         {
           "id": "t002",
           "subject": "billing question",
           "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
           "category": "billing",
-          "similarity": 0.4658
+          "similarity": 0.2501
         },
         {
           "id": "t017",
           "subject": "seat count wrong on invoice",
           "body": "our invoice says 12 seats but we only have 9 active agents, 3 people left the company months ago and we removed them from the workspace. why are we still being charged for them",
           "category": "billing",
-          "similarity": 0.4242
+          "similarity": 0.1676
         }
       ],
       "retrieved_ids": [
-        "t023",
         "t002",
         "t017"
       ],
@@ -1069,59 +927,43 @@
       "ideal_category": "account_access",
       "predicted_category": "account_access",
       "category_correct": true,
-      "agent_response": "We're sorry for the trouble accessing your account. Please try requesting a password reset link. If you are locked out due to 2FA issues or expired reset links, our security team will manually verify your identity and restore your account access.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Explain link expiry window, trigger fresh reset link, offer manual unlock if issue persists.",
-      "needs_human": false,
+      "needs_human": true,
       "expected_escalation": false,
-      "escalation_reason": "Standard inquiry resolved via automated knowledge base guidance.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.1565 below threshold 0.25).",
       "difficulty": "easy",
-      "confidence": 0.72,
-      "retrieval_latency_ms": 13.47,
-      "generation_latency_ms": 0.02,
-      "total_agent_latency_ms": 13.59,
+      "confidence": 0.58,
+      "retrieval_latency_ms": 0.03,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.07,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t013",
-      "retrieval_top_similarity": 0.4327,
+      "retrieval_top_similarity": 0.1565,
       "retrieved_context": [
         {
           "id": "t001",
           "subject": "cant login again!!",
           "body": "hi team, i tried loggin in like 5 times now and it keeps saying invalid password. i KNOW my password is right i use it everywhere else lol. pls help asap this is blocking my whole team from responding to customers",
           "category": "account_access",
-          "similarity": 0.4327
-        },
-        {
-          "id": "t011",
-          "subject": "why was i charged after cancelling",
-          "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
-          "category": "billing",
-          "similarity": 0.4121
-        },
-        {
-          "id": "t019",
-          "subject": "locked out, 2fa issue",
-          "body": "switched phones last week and didnt transfer my authenticator app, now i cant get past 2fa to log in. lost the backup codes too somewhere in my old notes app probably. need account access restored",
-          "category": "account_access",
-          "similarity": 0.321
+          "similarity": 0.1565
         }
       ],
       "retrieved_ids": [
-        "t001",
-        "t011",
-        "t019"
+        "t001"
       ],
-      "deterministic_score": 0.8,
-      "deterministic_pass": true,
+      "deterministic_score": 0.6,
+      "deterministic_pass": false,
       "deterministic_details": {
         "case_id": "t013",
         "intent_pass": true,
         "required_facts_pass": false,
         "forbidden_claims_pass": true,
-        "escalation_pass": true,
+        "escalation_pass": false,
         "grounding_pass": true,
-        "deterministic_pass": true,
-        "deterministic_score": 0.8,
+        "deterministic_pass": false,
+        "deterministic_score": 0.6,
         "details": {
           "missing_facts": [
             "fresh reset link",
@@ -1131,22 +973,22 @@
           "expected_intent": "account_access",
           "predicted_intent": "account_access",
           "expected_escalation": false,
-          "agent_escalation": false
+          "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.1733,
-      "overall_score": 3.22,
+      "semantic_similarity": 0.0,
+      "overall_score": 2.33,
       "correctness": 3.0,
-      "relevance": 3.0,
+      "relevance": 2.0,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.3,
-      "escalation_appropriateness": 5.0,
+      "helpfulness": 2.0,
+      "escalation_appropriateness": 1.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.17, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.00, missing_facts=2, escalation_ok=False",
       "judge_confidence": 3.5,
-      "failure_type": "INCOMPLETE_ANSWER"
+      "failure_type": "UNNECESSARY_ESCALATION"
     },
     {
       "id": "t017",
@@ -1154,59 +996,33 @@
       "ideal_category": "billing",
       "predicted_category": "billing",
       "category_correct": true,
-      "agent_response": "Thank you for reaching out regarding your billing inquiry. We are reviewing your account invoice details. If there was a duplicate charge, wrong seat count on invoice, or invoice address update requested, we will issue an immediate refund and update your invoice billing profile.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Verify active seat count (9 vs 12), update subscription to 9 seats, issue credit/refund for 3 removed seats.",
-      "needs_human": false,
+      "needs_human": true,
       "expected_escalation": false,
-      "escalation_reason": "Standard inquiry resolved via automated knowledge base guidance.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.0000 below threshold 0.25).",
       "difficulty": "medium",
-      "confidence": 0.71,
-      "retrieval_latency_ms": 18.78,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 18.9,
+      "confidence": 0.5,
+      "retrieval_latency_ms": 0.03,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.06,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t017",
-      "retrieval_top_similarity": 0.4126,
-      "retrieved_context": [
-        {
-          "id": "t004",
-          "subject": "how do i add a new agent",
-          "body": "new hire starting monday, where do i go to add her as an agent on the shared inbox? also does adding more seats change our bill",
-          "category": "how_to",
-          "similarity": 0.4126
-        },
-        {
-          "id": "t022",
-          "subject": "duplicate tickets being created",
-          "body": "every time a customer replies to an email thread it creates a brand new ticket instead of adding to the existing one, we now have like 40 duplicate tickets from the same 5 customers this week",
-          "category": "technical_bug",
-          "similarity": 0.3624
-        },
-        {
-          "id": "t002",
-          "subject": "billing question",
-          "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
-          "category": "billing",
-          "similarity": 0.3289
-        }
-      ],
-      "retrieved_ids": [
-        "t004",
-        "t022",
-        "t002"
-      ],
-      "deterministic_score": 0.8,
-      "deterministic_pass": true,
+      "retrieval_top_similarity": 0.0,
+      "retrieved_context": [],
+      "retrieved_ids": [],
+      "deterministic_score": 0.6,
+      "deterministic_pass": false,
       "deterministic_details": {
         "case_id": "t017",
         "intent_pass": true,
         "required_facts_pass": false,
         "forbidden_claims_pass": true,
-        "escalation_pass": true,
+        "escalation_pass": false,
         "grounding_pass": true,
-        "deterministic_pass": true,
-        "deterministic_score": 0.8,
+        "deterministic_pass": false,
+        "deterministic_score": 0.6,
         "details": {
           "missing_facts": [
             "active seats 9",
@@ -1216,22 +1032,22 @@
           "expected_intent": "billing",
           "predicted_intent": "billing",
           "expected_escalation": false,
-          "agent_escalation": false
+          "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.177,
-      "overall_score": 3.25,
+      "semantic_similarity": 0.0686,
+      "overall_score": 2.42,
       "correctness": 3.0,
-      "relevance": 3.1,
+      "relevance": 2.4,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.4,
-      "escalation_appropriateness": 5.0,
+      "helpfulness": 2.1,
+      "escalation_appropriateness": 1.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.18, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.07, missing_facts=2, escalation_ok=False",
       "judge_confidence": 3.5,
-      "failure_type": "INCOMPLETE_ANSWER"
+      "failure_type": "UNNECESSARY_ESCALATION"
     },
     {
       "id": "t022",
@@ -1239,45 +1055,37 @@
       "ideal_category": "technical_bug",
       "predicted_category": "technical_bug",
       "category_correct": true,
-      "agent_response": "Thank you for reporting this issue. Our engineering team has logged this bug report for investigation. We will investigate tag syncing errors, app crashes, email notification issues, or duplicate ticket threading and notify you as soon as a fix is deployed.",
+      "agent_response": "I do not have sufficient verified information in my support knowledge base to resolve this confidently, so I have escalated this ticket to a human support agent.",
       "expected_answer": "Acknowledge email threading bug, offer ticket cleanup/merge, escalate to engineering.",
       "needs_human": true,
       "expected_escalation": true,
-      "escalation_reason": "Systemic technical issue impacting multiple tickets or rules.",
+      "escalation_reason": "Insufficient retrieved evidence context (top similarity 0.2393 below threshold 0.25).",
       "difficulty": "hard",
-      "confidence": 0.69,
-      "retrieval_latency_ms": 16.17,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 16.29,
+      "confidence": 0.62,
+      "retrieval_latency_ms": 0.04,
+      "generation_latency_ms": 0.1,
+      "total_agent_latency_ms": 0.08,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t022",
-      "retrieval_top_similarity": 0.377,
+      "retrieval_top_similarity": 0.2393,
       "retrieved_context": [
-        {
-          "id": "t015",
-          "subject": "not happy",
-          "body": "been a customer for 2 years and support response times have gotten way worse lately, tickets sit for days. also the new UI is confusing. considering switching, what can you do to keep us",
-          "category": "refund_complaint",
-          "similarity": 0.377
-        },
         {
           "id": "t020",
           "subject": "email notifications stopped",
           "body": "used to get an email every time a new conversation came in, stopped about a week ago, didnt change any settings that i know of. checked spam folder, nothing there either",
           "category": "technical_bug",
-          "similarity": 0.3559
+          "similarity": 0.2393
         },
         {
           "id": "t012",
           "subject": "app keeps crashing",
           "body": "the gmail extension crashes every time i try to open a conversation with more than like 10 replies in the thread. happens on both my laptop and desktop, reinstalled twice already",
           "category": "technical_bug",
-          "similarity": 0.34
+          "similarity": 0.182
         }
       ],
       "retrieved_ids": [
-        "t015",
         "t020",
         "t012"
       ],
@@ -1304,17 +1112,17 @@
           "agent_escalation": true
         }
       },
-      "semantic_similarity": 0.2154,
-      "overall_score": 3.28,
+      "semantic_similarity": 0.1487,
+      "overall_score": 3.2,
       "correctness": 3.0,
-      "relevance": 3.3,
+      "relevance": 2.9,
       "completeness": 1.0,
       "groundedness": 5.0,
-      "helpfulness": 2.4,
+      "helpfulness": 2.3,
       "escalation_appropriateness": 5.0,
       "overall_pass": false,
       "judge_mode": "heuristic_fallback",
-      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.22, missing_facts=2, escalation_ok=True",
+      "judge_reasoning": "[heuristic_fallback] cat_match=True, sim=0.15, missing_facts=2, escalation_ok=True",
       "judge_confidence": 3.5,
       "failure_type": "INCOMPLETE_ANSWER"
     },
@@ -1330,41 +1138,41 @@
       "expected_escalation": false,
       "escalation_reason": "Systemic technical issue impacting multiple tickets or rules.",
       "difficulty": "hard",
-      "confidence": 0.78,
-      "retrieval_latency_ms": 15.92,
-      "generation_latency_ms": 0.01,
-      "total_agent_latency_ms": 16.04,
+      "confidence": 0.65,
+      "retrieval_latency_ms": 0.04,
+      "generation_latency_ms": 0.0,
+      "total_agent_latency_ms": 0.09,
       "generation_mode": "template_fallback",
-      "retrieval_method": "SentenceTransformer (all-MiniLM-L6-v2)",
+      "retrieval_method": "TF-IDF Baseline",
       "excluded_source_id": "t023",
-      "retrieval_top_similarity": 0.5559,
+      "retrieval_top_similarity": 0.2955,
       "retrieved_context": [
         {
           "id": "t005",
           "subject": "refund pls",
           "body": "we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st, we barely used it this cycle",
           "category": "refund_complaint",
-          "similarity": 0.5559
-        },
-        {
-          "id": "t011",
-          "subject": "why was i charged after cancelling",
-          "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
-          "category": "billing",
-          "similarity": 0.4621
+          "similarity": 0.2955
         },
         {
           "id": "t002",
           "subject": "billing question",
           "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
           "category": "billing",
-          "similarity": 0.3856
+          "similarity": 0.198
+        },
+        {
+          "id": "t011",
+          "subject": "why was i charged after cancelling",
+          "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
+          "category": "billing",
+          "similarity": 0.1669
         }
       ],
       "retrieved_ids": [
         "t005",
-        "t011",
-        "t002"
+        "t002",
+        "t011"
       ],
       "deterministic_score": 0.8,
       "deterministic_pass": true,

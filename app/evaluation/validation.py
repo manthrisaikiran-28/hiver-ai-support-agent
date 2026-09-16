@@ -2,10 +2,12 @@
 Judge Validation Module.
 Compares Human Ground Truth Judgments vs. LLM/Heuristic Judge Scores to calculate agreement rate
 and analyze systematic disagreements (e.g. verbosity bias, reference answer bias).
+
+Methodology Note: Single-reviewer manual validation on 11 golden set cases.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Dict, Any, List
 
 
@@ -31,6 +33,7 @@ class ValidationReport:
     agreements: int
     disagreements: int
     agreement_rate_pct: float
+    reviewer_mode: str
     disagreement_examples: List[Dict[str, Any]]
 
 
@@ -76,5 +79,6 @@ def validate_judge(judge_results: List[Dict[str, Any]]) -> ValidationReport:
         agreements=agreements,
         disagreements=disagreements,
         agreement_rate_pct=rate,
+        reviewer_mode="Single-reviewer manual validation",
         disagreement_examples=examples,
     )
