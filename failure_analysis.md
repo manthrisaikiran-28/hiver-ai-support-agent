@@ -32,11 +32,12 @@ The table below presents the actual failure categorization recorded from the fin
 
 | Failure Category | Version A (TF-IDF) | Version B (SentenceTransformers) | Interpretation |
 | :--- | :---: | :---: | :--- |
-| **Retrieval Failures** | **0** | **0** | Zero cases fell below the low-confidence vector retrieval threshold (`< 0.25`). |
-| **Generation Failures** | **10** | **7** | Cases where response quality scored below target (4.0 / 5.0) threshold in template fallback mode. |
-| **Escalation Errors** | **0** | **1** | Cases where escalation decision differed from golden expectation (`t023` false positive escalation). |
-| **Deterministic Failures** | **7** | **1** | Cases failing strict required-fact, intent, or escalation boolean checks. |
-| **Judge Disagreements** | **0** | **0** | Cases where judge and deterministic/manual ground truth disagreed on pass/fail direction. |
+| **Retrieval Failures** | **0** | **0** | Retrieval failed to provide sufficient evidence (zero cases below confidence threshold `< 0.25`). |
+| **Generation Failures** | **0** | **0** | Technical generation process failed or produced no usable output. |
+| **Overall Quality Threshold Failures** | **10** | **7** | Generated response received an overall rubric score below the 4.0 / 5.0 target threshold in template fallback mode. |
+| **Deterministic Validation Failures** | **7** | **1** | Cases failing strict required-fact, intent, or escalation boolean checks. |
+| **Escalation Errors** | **0** | **1** | Escalation decision was incorrect (`t023` false positive escalation). |
+| **Judge Disagreements** | **0** | **0** | Judge result disagreed with expected/deterministic result. |
 
 ---
 
