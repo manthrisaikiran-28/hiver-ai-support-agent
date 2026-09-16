@@ -1,0 +1,374 @@
+{
+  "summary": {
+    "total_evaluated": 11,
+    "pass_rate_pct": 63.6,
+    "category_accuracy_pct": 90.9,
+    "avg_overall_score": 3.55,
+    "avg_correctness": 3.18,
+    "avg_completeness": 2.63,
+    "avg_relevance": 3.22,
+    "avg_groundedness": 5.0,
+    "avg_deterministic_score": 0.8,
+    "avg_semantic_similarity": 0.2052,
+    "avg_agent_latency_ms": 0.13,
+    "per_category_breakdown": {
+      "account_access": {
+        "total_cases": 2,
+        "correct": 2,
+        "accuracy": 1.0,
+        "avg_score": 3.47
+      },
+      "billing": {
+        "total_cases": 3,
+        "correct": 2,
+        "accuracy": 0.67,
+        "avg_score": 3.38
+      },
+      "technical_bug": {
+        "total_cases": 3,
+        "correct": 3,
+        "accuracy": 1.0,
+        "avg_score": 3.44
+      },
+      "refund_complaint": {
+        "total_cases": 2,
+        "correct": 2,
+        "accuracy": 1.0,
+        "avg_score": 3.76
+      },
+      "how_to": {
+        "total_cases": 1,
+        "correct": 1,
+        "accuracy": 1.0,
+        "avg_score": 4.15
+      }
+    },
+    "per_difficulty_breakdown": {
+      "easy": {
+        "total_cases": 4,
+        "accuracy": 1.0,
+        "avg_score": 3.65
+      },
+      "hard": {
+        "total_cases": 4,
+        "accuracy": 1.0,
+        "avg_score": 3.65
+      },
+      "medium": {
+        "total_cases": 3,
+        "accuracy": 0.67,
+        "avg_score": 3.28
+      }
+    }
+  },
+  "failure_analysis": {
+    "total_failures": 10,
+    "failure_rate_pct": 90.9,
+    "statistics": [
+      {
+        "failure_type": "INCOMPLETE_ANSWER",
+        "count": 8,
+        "percentage": 72.7
+      },
+      {
+        "failure_type": "WRONG_INTENT",
+        "count": 1,
+        "percentage": 9.1
+      },
+      {
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "count": 1,
+        "percentage": 9.1
+      }
+    ],
+    "failure_records": [
+      {
+        "case_id": "t001",
+        "query": "cant login again!! hi team, i tried loggin in like 5 times now and it keeps saying invalid password...",
+        "expected_behavior": "Acknowledge login failures, instruct password reset, offer manual unlock if reset fails.",
+        "actual_response": "We're sorry for the trouble accessing your account. Please try requesting a password reset. If you are locked out due to 2FA or repeated failed attempts, our security team will manually verify your identity and restore your access promptly.",
+        "retrieved_context": [
+          {
+            "id": "t001",
+            "subject": "cant login again!!",
+            "body": "hi team, i tried loggin in like 5 times now and it keeps saying invalid password. i KNOW my password is right i use it everywhere else lol. pls help asap this is blocking my whole team from responding to customers",
+            "category": "account_access",
+            "similarity": 0.7022
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 3.72,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['account access'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t002",
+        "query": "billing question hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd... also unrelated but can we get an invoice with our company address on it",
+        "expected_behavior": "Investigate duplicate charge on 3rd and 9th, process refund if verified, AND update invoice address to company address.",
+        "actual_response": "We have reviewed your billing ticket: 1) We are investigating the duplicate charge ($149 on 3rd & 9th) to process an immediate refund, and 2) We have updated your invoice billing profile to list your company address instead of your personal address for accounting.",
+        "retrieved_context": [
+          {
+            "id": "t002",
+            "subject": "billing question",
+            "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
+            "category": "billing",
+            "similarity": 0.8822
+          },
+          {
+            "id": "t011",
+            "subject": "why was i charged after cancelling",
+            "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
+            "category": "billing",
+            "similarity": 0.2451
+          },
+          {
+            "id": "t018",
+            "subject": "can we get sso",
+            "body": "our it team requires single sign on for any tool we use, does this exist on your platform and which plan is it on",
+            "category": "feature_request",
+            "similarity": 0.2436
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 4.35,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['duplicate charge refund', 'invoice company address update'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t003",
+        "query": "tags not syncing we tag convos as 'urgent' but when my teammate opens the same conversation from her side the tag isnt there...",
+        "expected_behavior": "Acknowledge tag sync bug, gather browser/account details, escalate to engineering for investigation.",
+        "actual_response": "Thank you for reporting this issue. Our engineering team has logged this bug (e.g. sync error, crash, or notification failure) and is investigating a fix. We will update you as soon as the patch is deployed.",
+        "retrieved_context": [
+          {
+            "id": "t003",
+            "subject": "tags not syncing",
+            "body": "we tag convos as 'urgent' but when my teammate opens the same conversation from her side the tag isnt there. refreshing doesnt fix it. is this a known bug or are we doing smth wrong",
+            "category": "technical_bug",
+            "similarity": 0.8017
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 3.52,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['bug report logged', 'engineering investigation'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t005",
+        "query": "refund pls we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st...",
+        "expected_behavior": "Acknowledge cancellation, offer prorated/full refund per policy, frame to reduce churn friction.",
+        "actual_response": "We're sorry to hear about your experience. If you are requesting a refund or cancellation, we can process a full or prorated refund per our policy, or work with you to adjust your plan to better fit your needs.",
+        "retrieved_context": [
+          {
+            "id": "t005",
+            "subject": "refund pls",
+            "body": "we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st, we barely used it this cycle",
+            "category": "refund_complaint",
+            "similarity": 0.9223
+          },
+          {
+            "id": "t023",
+            "subject": "want a refund AND to keep using it??",
+            "body": "so this is weird but we want a partial refund for last month since the outage on the 14th cost us a bunch of missed customer replies, but we still want to keep our subscription active, not cancelling",
+            "category": "refund_complaint",
+            "similarity": 0.233
+          },
+          {
+            "id": "t018",
+            "subject": "can we get sso",
+            "body": "our it team requires single sign on for any tool we use, does this exist on your platform and which plan is it on",
+            "category": "feature_request",
+            "similarity": 0.1685
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 4.05,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['cancellation refund', 'retention review'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t007",
+        "query": "urgent - data missing opened the dashboard this morning and half our conversation history from last week is just gone...",
+        "expected_behavior": "Treat as critical compliance/data loss issue, escalate immediately to tier-2 engineering.",
+        "actual_response": "Thank you for reporting this issue. Our engineering team has logged this bug (e.g. sync error, crash, or notification failure) and is investigating a fix. We will update you as soon as the patch is deployed.",
+        "retrieved_context": [
+          {
+            "id": "t007",
+            "subject": "urgent - data missing",
+            "body": "opened the dashboard this morning and half our conversation history from last week is just gone. this is really bad we need this for compliance reasons. please escalate",
+            "category": "technical_bug",
+            "similarity": 0.7899
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 3.52,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['escalate to engineering', 'compliance priority'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t011",
+        "query": "why was i charged after cancelling i cancelled on the 15th and got charged again on the 20th for the full month??",
+        "expected_behavior": "Apologize for post-cancellation charge, verify date, process immediate refund, and explain cutoff timing politely.",
+        "actual_response": "We're sorry to hear about your experience. If you are requesting a refund or cancellation, we can process a full or prorated refund per our policy, or work with you to adjust your plan to better fit your needs.",
+        "retrieved_context": [
+          {
+            "id": "t011",
+            "subject": "why was i charged after cancelling",
+            "body": "i cancelled on the 15th and got charged again on the 20th for the full month?? this feels like a scam honestly, need this reversed today",
+            "category": "billing",
+            "similarity": 0.8242
+          },
+          {
+            "id": "t002",
+            "subject": "billing question",
+            "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
+            "category": "billing",
+            "similarity": 0.2501
+          },
+          {
+            "id": "t017",
+            "subject": "seat count wrong on invoice",
+            "body": "our invoice says 12 seats but we only have 9 active agents, 3 people left the company months ago and we removed them from the workspace. why are we still being charged for them",
+            "category": "billing",
+            "similarity": 0.1676
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.5,
+        "judge_score": 2.28,
+        "failure_type": "WRONG_INTENT",
+        "root_cause": "Intent misclassified as 'refund_complaint' instead of expected 'billing'.",
+        "suggested_improvement": "Expand intent keyword pattern matching or add vector intent classification."
+      },
+      {
+        "case_id": "t013",
+        "query": "password reset link expired clicked forgot password, got the email, but by the time i clicked the link it said expired...",
+        "expected_behavior": "Explain link expiry window, trigger fresh reset link, offer manual unlock if issue persists.",
+        "actual_response": "We're sorry for the trouble accessing your account. Please try requesting a password reset. If you are locked out due to 2FA or repeated failed attempts, our security team will manually verify your identity and restore your access promptly.",
+        "retrieved_context": [
+          {
+            "id": "t013",
+            "subject": "password reset link expired",
+            "body": "clicked forgot password, got the email, but by the time i clicked the link (maybe 20 min later) it said expired. sent myself 3 more, all expire super fast. can you just reset it manually or extend the link time",
+            "category": "account_access",
+            "similarity": 0.8077
+          },
+          {
+            "id": "t001",
+            "subject": "cant login again!!",
+            "body": "hi team, i tried loggin in like 5 times now and it keeps saying invalid password. i KNOW my password is right i use it everywhere else lol. pls help asap this is blocking my whole team from responding to customers",
+            "category": "account_access",
+            "similarity": 0.1565
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 3.22,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['fresh reset link', 'link expiry window'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t017",
+        "query": "seat count wrong on invoice our invoice says 12 seats but we only have 9 active agents...",
+        "expected_behavior": "Verify active seat count (9 vs 12), update subscription to 9 seats, issue credit/refund for 3 removed seats.",
+        "actual_response": "Thank you for reaching out regarding your billing inquiry. We are reviewing your account invoice details. If there was a duplicate charge, seat count error, or address change request, we will issue the appropriate refund or update your invoice details immediately.",
+        "retrieved_context": [
+          {
+            "id": "t017",
+            "subject": "seat count wrong on invoice",
+            "body": "our invoice says 12 seats but we only have 9 active agents, 3 people left the company months ago and we removed them from the workspace. why are we still being charged for them",
+            "category": "billing",
+            "similarity": 0.6851
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 3.52,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['active seats 9', 'refund for 3 seats'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t022",
+        "query": "duplicate tickets being created every time a customer replies to an email thread it creates a brand new ticket...",
+        "expected_behavior": "Acknowledge email threading bug, offer ticket cleanup/merge, escalate to engineering.",
+        "actual_response": "Thank you for reporting this issue. Our engineering team has logged this bug (e.g. sync error, crash, or notification failure) and is investigating a fix. We will update you as soon as the patch is deployed.",
+        "retrieved_context": [
+          {
+            "id": "t022",
+            "subject": "duplicate tickets being created",
+            "body": "every time a customer replies to an email thread it creates a brand new ticket instead of adding to the existing one, we now have like 40 duplicate tickets from the same 5 customers this week",
+            "category": "technical_bug",
+            "similarity": 0.7655
+          },
+          {
+            "id": "t020",
+            "subject": "email notifications stopped",
+            "body": "used to get an email every time a new conversation came in, stopped about a week ago, didnt change any settings that i know of. checked spam folder, nothing there either",
+            "category": "technical_bug",
+            "similarity": 0.2393
+          },
+          {
+            "id": "t012",
+            "subject": "app keeps crashing",
+            "body": "the gmail extension crashes every time i try to open a conversation with more than like 10 replies in the thread. happens on both my laptop and desktop, reinstalled twice already",
+            "category": "technical_bug",
+            "similarity": 0.182
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.83,
+        "judge_score": 3.27,
+        "failure_type": "INCOMPLETE_ANSWER",
+        "root_cause": "Response omitted required resolution facts: ['email threading bug', 'ticket merge cleanup'].",
+        "suggested_improvement": "Refine prompt/template to ensure multi-intent completeness."
+      },
+      {
+        "case_id": "t023",
+        "query": "want a refund AND to keep using it?? so this is weird but we want a partial refund for last month since the outage on the 14th...",
+        "expected_behavior": "Recognize this is NOT a cancellation. Process partial outage credit while keeping subscription active.",
+        "actual_response": "We acknowledge your partial refund request for the outage on the 14th. We will issue a credit for the impacted period while keeping your subscription active as requested so your service remains uninterrupted.",
+        "retrieved_context": [
+          {
+            "id": "t023",
+            "subject": "want a refund AND to keep using it??",
+            "body": "so this is weird but we want a partial refund for last month since the outage on the 14th cost us a bunch of missed customer replies, but we still want to keep our subscription active, not cancelling",
+            "category": "refund_complaint",
+            "similarity": 0.823
+          },
+          {
+            "id": "t005",
+            "subject": "refund pls",
+            "body": "we decided to cancel, the product just isnt working for our team size. can you refund the last payment we made on the 1st, we barely used it this cycle",
+            "category": "refund_complaint",
+            "similarity": 0.2955
+          },
+          {
+            "id": "t002",
+            "subject": "billing question",
+            "body": "hey so i noticed we got charged twice this month? once on the 3rd and once on the 9th, same amount 149 usd. can someone check this out. also unrelated but can we get an invoice with our company address on it instead of the personal one, need it for accounting",
+            "category": "billing",
+            "similarity": 0.198
+          }
+        ],
+        "retrieval_similarity": 0.0,
+        "deterministic_score": 0.67,
+        "judge_score": 3.48,
+        "failure_type": "UNNECESSARY_ESCALATION",
+        "root_cause": "Agent triggered false positive escalation on standard query.",
+        "suggested_improvement": "Tune risk keyword sensitivity threshold."
+      }
+    ]
+  }
+}

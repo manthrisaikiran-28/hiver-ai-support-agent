@@ -1,0 +1,162 @@
+"""
+Evaluation Harness Orchestrator.
+Loads golden dataset -> runs agent -> executes deterministic checks -> computes semantic similarity
+-> invokes LLM-as-a-Judge -> analyzes failures -> generates comprehensive evaluation reports.
+"""
+
+from __future__ import annotations
+import json
+import csv
+from pathlib import Path
+from typing import Dict, Any, List
+from app.data.loader import DataLoader
+from app.agent.retrieval import build_knowledge_base_from_tickets
+from app.agent.agent import SupportAgent
+from app.evaluation.deterministic import evaluate_deterministic
+from app.evaluation.semantic import evaluate_semantic
+from app.evaluation.llm_judge import evaluate_llm_judge
+from app.evaluation.failure_analysis import analyze_failures
+from app.evaluation.metrics import calculate_aggregate_metrics
+from app.evaluation.validation import validate_judge
+
+
+class EvaluationHarness:
+    """
+    Complete, reproducible Evaluation Harness.
+    """
+
+    def __init__(self, golden_path: str = "data/golden/golden_v1.jsonl",
+                 raw_tickets_path: str = "data/raw/tickets.jsonl"):
+        self.golden_path = Path(golden_path)
+        self.raw_tickets_path = Path(raw_tickets_path)
+
+    def run_evaluation(self, output_dir: str = "evaluation/results") -> Dict[str, Any]:
+        print(f"Loading golden evaluation set from: {self.golden_path}")
+        loader = DataLoader()
+        golden_set = loader.load_auto(self.golden_path)
+
+        print(f"Loading knowledge base tickets from: {self.raw_tickets_path}")
+        raw_tickets = loader.load_auto(self.raw_tickets_path)
+        kb = build_knowledge_base_from_tickets(raw_tickets)
+
+        agent = SupportAgent(vector_store=kb)
+
+        results = []
+        print(f"Running agent and evaluation across {len(golden_set)} test cases...")
+
+        for golden in golden_set:
+            gid = golden.get("id", "")
+            query = golden.get("query", "")
+            expected_intent = golden.get("intent", golden.get("ideal_category", ""))
+            expected_answer = golden.get("expected_answer", golden.get("ideal_response", ""))
+            difficulty = golden.get("difficulty", "medium")
+
+            # 1. Run Agent
+            agent_input = {"id": gid, "subject": golden.get("subject", query[:40]), "body": query}
+            agent_output = agent.process(agent_input)
+
+            # 2. Deterministic Checks
+            det_res = evaluate_deterministic(agent_output.to_dict(), golden)
+
+            # 3. Semantic Similarity
+            sem_res = evaluate_semantic(agent_output.to_dict(), golden)
+
+            # 4. LLM-as-a-Judge
+            judge_res = evaluate_llm_judge(agent_output.to_dict(), golden)
+
+            cat_correct = (agent_output.intent == expected_intent)
+
+            record = {
+                "id": gid,
+                "query": query,
+                "ideal_category": expected_intent,
+                "predicted_category": agent_output.intent,
+                "category_correct": cat_correct,
+                "agent_response": agent_output.response,
+                "expected_answer": expected_answer,
+                "needs_human": agent_output.needs_human,
+                "expected_escalation": golden.get("expected_escalation", False),
+                "escalation_reason": agent_output.escalation_reason,
+                "difficulty": difficulty,
+                "confidence": agent_output.confidence,
+                "agent_latency_ms": agent_output.agent_latency_ms,
+
+                # Scores
+                "deterministic_score": det_res.score,
+                "deterministic_pass": det_res.overall_pass,
+                "deterministic_details": det_res.details,
+                "semantic_similarity": sem_res["semantic_similarity"],
+                "overall_score": judge_res.overall_score,
+                "correctness": judge_res.correctness,
+                "relevance": judge_res.relevance,
+                "completeness": judge_res.completeness,
+                "groundedness": judge_res.groundedness,
+                "helpfulness": judge_res.helpfulness,
+                "escalation_score": judge_res.escalation,
+                "overall_pass": (judge_res.overall_score >= 3.5 and det_res.overall_pass),
+                "judge_mode": judge_res.judge_mode,
+                "judge_reasoning": judge_res.reason,
+                "failure_type": judge_res.failure_type,
+                "retrieved_context": agent_output.retrieved_context,
+            }
+            results.append(record)
+
+        # 5. Aggregate Metrics
+        metrics = calculate_aggregate_metrics(results)
+
+        # 6. Failure Analysis
+        failure_analysis = analyze_failures(results)
+
+        # 7. Judge Validation
+        validation_report = validate_judge(results)
+
+        # Prepare final output object
+        output_data = {
+            "summary": metrics,
+            "failure_analysis": failure_analysis,
+            "judge_validation": {
+                "total_cases": validation_report.total_cases,
+                "agreements": validation_report.agreements,
+                "disagreements": validation_report.disagreements,
+                "agreement_rate_pct": validation_report.agreement_rate_pct,
+                "disagreement_examples": validation_report.disagreement_examples,
+            },
+            "results": results,
+        }
+
+        # Save results files
+        out_dir = Path(output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        json_path = out_dir / "latest_results.json"
+        summary_path = out_dir / "summary.json"
+        csv_path = out_dir / "latest_results.csv"
+
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(output_data, f, indent=2)
+
+        with open(summary_path, "w", encoding="utf-8") as f:
+            json.dump({"summary": metrics, "failure_analysis": failure_analysis}, f, indent=2)
+
+        # Write CSV report
+        if results:
+            fieldnames = ["id", "ideal_category", "predicted_category", "category_correct",
+                          "deterministic_score", "semantic_similarity", "overall_score",
+                          "overall_pass", "needs_human", "expected_escalation", "failure_type"]
+            with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+                writer.writeheader()
+                writer.writerows(results)
+
+        print(f"\nCompleted evaluation! Aggregate Category Accuracy: {metrics['category_accuracy_pct']}% | Avg Score: {metrics['avg_overall_score']}/5.0")
+        print(f"Results saved to: {json_path}")
+        return output_data
+
+
+def run_eval():
+    harness = EvaluationHarness()
+    return harness.run_evaluation()
+
+
+if __name__ == "__main__":
+    run_eval()

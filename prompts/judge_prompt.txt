@@ -1,0 +1,36 @@
+You are an impartial, highly rigorous evaluator grading an AI customer support agent's response.
+
+Customer Ticket:
+Subject: {subject}
+Body: {body}
+
+Agent Classification: {predicted_category}
+Agent Response:
+"{agent_response}"
+
+Ideal Reference Response (Human Ground Truth):
+"{ideal_response}"
+
+Retrieved Evidence Context:
+"{retrieved_context}"
+
+Score the agent's response from 1 to 5 on:
+1. correctness: Does it address the core problem, including ALL distinct asks in the ticket?
+2. relevance: Is the response directly tailored to the customer's query without fluff or irrelevant info?
+3. completeness: Does it cover all necessary resolution points described in the ideal response?
+4. groundedness: Is every claim supported by the retrieved context without hallucination?
+5. helpfulness: Is the response actionable, clear, polite, and practical for the customer?
+6. escalation: Did the agent correctly escalate (or refrain from escalating) based on urgency/complexity?
+
+Output strictly valid JSON with this format:
+{{
+  "overall_score": <1.0-5.0>,
+  "correctness": <1-5>,
+  "relevance": <1-5>,
+  "completeness": <1-5>,
+  "groundedness": <1-5>,
+  "helpfulness": <1-5>,
+  "escalation": <1-5>,
+  "reason": "<1-2 sentence detailed critique>",
+  "failure_type": "<NONE | RETRIEVAL_FAILURE | GENERATION_FAILURE | HALLUCINATION | MISSING_CONTEXT | WRONG_INTENT | INCORRECT_ESCALATION | UNNECESSARY_ESCALATION | INCOMPLETE_ANSWER>"
+}}
